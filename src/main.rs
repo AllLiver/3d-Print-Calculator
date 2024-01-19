@@ -29,6 +29,7 @@ impl GeneralConfig {
             markup: 0.0,
         };
 
+        // Iterates over every line and puts it into a GeneralConfig struct
         for i in inp_vec {
             let setting: Vec<&str> = i.split("=").collect();
 
@@ -104,6 +105,7 @@ impl FilamentConfig {
         }
     }
 
+    // Function to initialize a FilamentConfig object from lines in config txt
     fn init(inp_vec: Vec<&str>) -> FilamentConfig {
         let mut new_fconfig = FilamentConfig {
             name: String::from(""),
@@ -113,6 +115,7 @@ impl FilamentConfig {
             spool_price: 0.0,
         };
 
+        // Iterates over every line and puts it into a FilamentConfig struct
         for i in inp_vec {
             let setting: Vec<&str> = i.split("=").collect();
 
@@ -146,6 +149,7 @@ impl FilamentConfig {
 }
 
 fn main() -> std::io::Result<()> {
+    // Variable that stores how many times main has looped (so it knows how many newlines to put before main menu text)
     let mut loops = 0;
 
     'main: loop {
@@ -184,11 +188,13 @@ fn main() -> std::io::Result<()> {
             .map(|x| *x)
             .collect();
         
+        // Prints extra newlines if it has looped
         if loops > 1 {
             println!("\n\n");
         }
         println!("Enter \"create\" to create a new filament configuration, \"calc\" to calculate a print, or \"exit\" to exit the program.");
 
+        // Input loop: guarantees a valid input
         let action = loop {
             let inp = accept_input();
 
@@ -200,6 +206,7 @@ fn main() -> std::io::Result<()> {
             break inp;
         };
 
+        // Adds a new filament config to config txt
         if action == "create" {
             FilamentConfig::write_to_file(raw_contents.clone());
             continue 'main;
@@ -244,19 +251,23 @@ fn main() -> std::io::Result<()> {
                 println!("\nIt looks like you do not have any filament configs, enter \"e\" to exit back to the main menu or \"m\" to manually enter a filament config.");
             }
 
+            // Gets input and proper FilamentConfig from user (if not exit)
             let filament: FilamentConfig;
             loop {
                 let inp = accept_input();
 
+                // Indexes the filament configurations to see if input matches any of them
                 let idx = filament_configs
                     .iter()
                     .position(|x| x.name.starts_with(&inp));
 
                 match idx {
+                    // If it does match, set selected filament config to the respective FilamentConfig struct
                     Some(val) => {
                         filament = filament_configs[val].clone();
                         break;
                     }
+                    // If it does not, check if the user is manaully entering a FilamentConfig
                     None => {
                         if inp == String::from("m") {
                             println!("\nWhat is the filament's name?");
@@ -283,8 +294,12 @@ fn main() -> std::io::Result<()> {
                             };
 
                             break;
+                        
+                        // Check if the user wishes to exit
                         } else if inp == String::from("e") {
                             continue 'main;
+
+                        // If the input does not meet any of the previous conditions, restart the input loop
                         } else {
                             println!("Invalid input! Please enter \"e\", \"m\", or the beginning of any filament config name.\n");
                             continue;
@@ -293,6 +308,7 @@ fn main() -> std::io::Result<()> {
                 }
             }
 
+            // Take print information from the user
             println!("\nFilament config {} loaded!\n", filament.name);
 
             println!("How heavy is the print?");
@@ -304,24 +320,27 @@ fn main() -> std::io::Result<()> {
             println!("\nHow many minutes is the print? (ignoring hours)");
             let print_minutes = accept_float();
 
+            // Calculate the print price
             let mut print_price = print_weight * (filament.spool_price / filament.spool_grams)
                 + (general_config.hourly_fee * (print_hours + print_minutes / 60.0));
             print_price *= general_config.markup;
 
             println!("\nThe print will cost ${print_price}, would you like to write the receipt to a txt file? (y or N)");
 
+            // Write receipt to a txt if the user desires
             if accept_input() == "y" {
                 println!("\nWho is the customer?");
                 let customer_name = accept_input();
 
+                // Generate file name
                 let mut receipt_name = String::new();
-
                 for i in customer_name.to_lowercase().split(" ") {
                     receipt_name += i;
                 }
 
-                receipt_name += "RECEIPT";
+                receipt_name += "RECEIPT"; 
 
+                // Create and write to receipt file
                 let mut receipt = File::create(&receipt_name)?;
                 let receipt_text = customer_name
                     + "'s receipt\nPrice: $"
@@ -343,6 +362,8 @@ fn main() -> std::io::Result<()> {
             }  else {
                 continue 'main;
             }
+        
+        // If the user exits in the main menu, stop the program
         } else if action == "exit" {
             panic!("User exit")
         }
@@ -350,6 +371,7 @@ fn main() -> std::io::Result<()> {
     }
 }
 
+// Function to accept input via the console
 fn accept_input() -> String {
     let mut input = String::new();
 
@@ -358,6 +380,7 @@ fn accept_input() -> String {
     input.trim().to_string()
 }
 
+// Special function that forces the user to enter a valid float
 fn accept_float() -> f32 {
     let input = loop {
         let inp = accept_input();
@@ -376,11 +399,14 @@ fn accept_float() -> f32 {
     input
 }
 
+// Drain the config vector up until a line that starts with a "!"
 fn drain_for_parse(contents: &mut Vec<&str>) {
+    // Indexes the vector for a "!"
     let temp_index = contents.iter().position(|x| x.starts_with("!"));
     let temp_index = match temp_index {
         Some(val) => val,
         None => contents.len() - 1,
     };
+    
     contents.drain(..temp_index + 1);
 }
