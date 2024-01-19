@@ -156,7 +156,7 @@ fn main() -> std::io::Result<()> {
             Err(_) => {
                 println!("{CONFIG_NAME} not found! Creating one now...");
                 let mut new_file = File::create(CONFIG_NAME)?;
-                File::write(&mut new_file, b"# 3D Print Calculator config, do not edit configuration names and only edit values\n# Filament configurations are added via the main program\n# Any line starting with a \"#\" is a commented line\n\n! General Config\nprinter_name = Printer\nhourly_fee = 0.5\nmarkup = 3.0")?;
+                File::write(&mut new_file, b"# 3d Print Calculator config\n# Do not edit configuration names and only edit values, any incorrect value types will cause the program to crash\n# Any lines starting with a \"!\" mark the beginning of a category, don't mess with or worry about these\n# Filament configurations are added via the main program\n# Any line starting with a \"#\" is a commented line\n\n! General Config\nprinter_name = Printer\nhourly_fee = 0.5\nmarkup = 3.0")?;
                 drop(new_file);
 
                 println!("{CONFIG_NAME} generated successfully! If you would like to use anything but the default general config exit the program and configure it.\n");
