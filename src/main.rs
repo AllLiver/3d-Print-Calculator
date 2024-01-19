@@ -33,7 +33,7 @@ impl GeneralConfig {
             let setting: Vec<&str> = i.split("=").collect();
 
             match setting[0].trim() {
-                "name" => new_gconfig.name = setting[1].trim().to_string(),
+                "printer_name" => new_gconfig.name = setting[1].trim().to_string(),
                 "hourly_fee" => {
                     new_gconfig.hourly_fee = setting[1]
                         .trim()
@@ -156,7 +156,7 @@ fn main() -> std::io::Result<()> {
             Err(_) => {
                 println!("{CONFIG_NAME} not found! Creating one now...");
                 let mut new_file = File::create(CONFIG_NAME)?;
-                File::write(&mut new_file, b"# 3D Print Calculator config, do not edit configuration names and only edit values\n# Filament configurations are added via the main program\n# Any line starting with a \"#\" is a commented line\n\n! General Config\nname = Printer\nhourly_fee = 0.5\nmarkup = 3.0")?;
+                File::write(&mut new_file, b"# 3D Print Calculator config, do not edit configuration names and only edit values\n# Filament configurations are added via the main program\n# Any line starting with a \"#\" is a commented line\n\n! General Config\nprinter_name = Printer\nhourly_fee = 0.5\nmarkup = 3.0")?;
                 drop(new_file);
 
                 println!("{CONFIG_NAME} generated successfully! If you would like to use anything but the default general config exit the program and configure it.\n");
@@ -324,9 +324,9 @@ fn main() -> std::io::Result<()> {
 
                 let mut receipt = File::create(&receipt_name)?;
                 let receipt_text = customer_name
-                    + "'s receipt\nPrice: "
+                    + "'s receipt\nPrice: $"
                     + &print_price.to_string()
-                    + "\nPrinter:"
+                    + "\nPrinter: "
                     + &general_config.name
                     + "\nFilament: "
                     + &filament.name
