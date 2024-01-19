@@ -16,7 +16,7 @@ Download the latest release from releases or compile it yourself (Follow MacOS a
 ### MacOS and Linux
 Unfortunately I have not compiled binaries for these platforms, so you will have to compile it yourself  
 - Make sure you have [Rust](https://rustup.rs/ "Rustup link") installed
-- Download the repository and unzip it
+- Download the source code from releases and unzip it
 - Navigate to the folder with the repository in it with a terminal
 - Then run:
 ```
