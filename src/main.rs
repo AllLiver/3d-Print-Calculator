@@ -337,7 +337,7 @@ fn main() -> std::io::Result<()> {
                     receipt_name += i;
                 }
 
-                receipt_name += "RECEIPT"; 
+                receipt_name += "RECEIPT.txt"; 
 
                 // Create and write to receipt file
                 let mut receipt = File::create(&receipt_name)?;
