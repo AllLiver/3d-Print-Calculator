@@ -69,8 +69,6 @@ struct FilamentConfig {
 impl FilamentConfig {
     // Function that writes a new filament config to file and prompts the user for the appropriate values
     fn write_to_file(raw_contents: String) {
-        let mut config_file = File::create(CONFIG_NAME).expect("Could not open a config.txt");
-
         println!("\nWhat is the filament's name?");
         let name: &str = &accept_input();
 
@@ -99,6 +97,7 @@ impl FilamentConfig {
             + spool_price;
         let write = write.as_bytes();
 
+        let mut config_file = File::create(CONFIG_NAME).expect("Could not open a config.txt");
         match File::write(&mut config_file, write) {
             Ok(_) => println!("\nWrote to config successfully!"),
             Err(e) => println!("Unable to write to file! {}", e.to_string()),
